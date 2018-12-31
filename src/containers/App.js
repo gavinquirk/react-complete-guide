@@ -4,6 +4,8 @@ import Persons from '../components/Persons/Persons'
 import Cockpit from '../components/Cockpit/Cockpit'
 import withClass from '../hoc/withClass'
 
+export const AuthContext = React.createContext(false)
+
 
 class App extends PureComponent {
   constructor(props) {
@@ -29,6 +31,16 @@ class App extends PureComponent {
     console.log('[UPDATE App.js Inside componentWillUpdate', nextProps, nextState)
   }
 
+  static getDerivedStateFromProps(nextProps, prevState) {
+    console.log('[UPDATE App.js Inside getDerivedStateFromProps', nextProps, prevState)
+
+    return prevState
+  }
+
+  getSnapshotBeforeUpdate() {
+    console.log('[UPDATE App.js Inside getSnapshotBeforeUpdate')
+  }
+
   componentDidUpdate() {
     console.log('[UPDATE App.js Inside componentDidUpdate')
   }
@@ -41,7 +53,8 @@ class App extends PureComponent {
     ],
     otherState: 'Some other value',
     showPersons: false,
-    toggleClicked: 0
+    toggleClicked: 0,
+    authenticated: false
   }
 
   deletePersonHandler = (personIndex) => {
@@ -60,6 +73,10 @@ class App extends PureComponent {
         toggleClicked: prevState.toggleClicked + 1
       }
     })
+  }
+
+  loginHandler = () => {
+    this.setState({ authenticated: true })
   }
 
   nameChangedHandler = (event, id) => {
@@ -90,7 +107,8 @@ class App extends PureComponent {
           <Persons 
             persons={this.state.persons}
             clicked={this.deletePersonHandler}
-            changed={this.nameChangedHandler}/>
+            changed={this.nameChangedHandler}
+          />
       )
     }
 
@@ -101,9 +119,11 @@ class App extends PureComponent {
           title={this.props.title} 
           showPersons={this.state.showPersons} 
           persons={this.state.persons}
-          clicked={this.togglePersonsHandler}/>
-        {persons}
-      </>
+          login={this.loginHandler}
+          clicked={this.togglePersonsHandler}
+        />
+        <AuthContext.Provider value={this.state.authenticated}>{persons}</AuthContext.Provider>
+        </>
     );
   }
 
