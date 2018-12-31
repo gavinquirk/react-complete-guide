@@ -2,6 +2,8 @@ import React, { PureComponent } from 'react';
 import classes from './App.css';
 import Persons from '../components/Persons/Persons'
 import Cockpit from '../components/Cockpit/Cockpit'
+import withClass from '../hoc/withClass'
+
 
 class App extends PureComponent {
   constructor(props) {
@@ -37,7 +39,9 @@ class App extends PureComponent {
       { id: 'vbaawfa', name: 'Manu', age: 29 },
       { id: 't4n7uma', name: "Stephanie", age: 26 }
     ],
-    otherState: 'Some other value'
+    otherState: 'Some other value',
+    showPersons: false,
+    toggleClicked: 0
   }
 
   deletePersonHandler = (personIndex) => {
@@ -50,7 +54,12 @@ class App extends PureComponent {
 
   togglePersonsHandler = () => {
     const doesShow = this.state.showPersons;
-    this.setState({ showPersons: !doesShow })
+    this.setState( (prevState, props) => { 
+      return {
+        showPersons: !doesShow,
+        toggleClicked: prevState.toggleClicked + 1
+      }
+    })
   }
 
   nameChangedHandler = (event, id) => {
@@ -86,7 +95,7 @@ class App extends PureComponent {
     }
 
     return (
-      <div className={classes.App}>
+      <>
         <button onClick={() => {this.setState({showPersons: true})}}>Show Persons</button>
         <Cockpit
           title={this.props.title} 
@@ -94,10 +103,10 @@ class App extends PureComponent {
           persons={this.state.persons}
           clicked={this.togglePersonsHandler}/>
         {persons}
-      </div>
+      </>
     );
   }
 
 }
 
-export default App
+export default withClass(App, classes.App)
